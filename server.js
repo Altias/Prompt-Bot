@@ -46,7 +46,7 @@ if (millisTill2 < 0 || hasToday == true) {
 
   setTimeout(function(){
 
-    //Channel ID for prompt output
+    //Output channel ID
     const channel = client.channels.get("ID HERE");
 	
 	  var chosen = "";
@@ -98,25 +98,37 @@ client.on('message', msg => {
 
 	var messageL = msg.content.toLowerCase();
 	
-	//Channel ID for submission input
+	//Input channel ID
 	if (messageL.includes("~submit")&& msg.channel.id == "ID HERE")
 	{
 		var input = msg.content.slice(8);
-		prompts.push(input);
 
-		save = JSON.stringify(prompts);
-		fs.writeFile('prompts.json', save, err => {
-		if (err)
+		var promptsCaps = prompts.map(function(x){ return x.toUpperCase(); });
+
+		if (promptsCaps.indexOf(input.toUpperCase()) != -1)
 		{
-			console.log("Error");
+			msg.channel.send( "This is already on the list!");
 		}
+
 		else
 		{
-			console.log("Added!");
-		}
-		});
+			prompts.push(input);
 		
-		msg.channel.send("Your prompt '" + input + "' has been added to the list!");
+			save = JSON.stringify(prompts);
+			fs.writeFile('prompts.json', save, err => {
+			if (err)
+			{
+				console.log("Error");
+			}
+			else
+			{
+				console.log("Added!");
+			}
+			});
+		
+		
+			msg.channel.send("Your prompt '" + input + "' has been added to the list!");
+		}
 		
 	}
 
